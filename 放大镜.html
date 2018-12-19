@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>放大镜</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+    /* 容器 */
+		.wrap {
+			position: relative;
+			/* border: 1px solid #FF6600; */
+			width: 400px;
+			height: 400px;
+			margin: 20px;
+		}
+     
+     /* 小视窗 */
+		.small {
+			position: relative;
+			width: 400px;
+			height: 400px;
+		}
+
+		.small img {
+			width: 100%;
+			height: 100%;
+		}
+
+    /* 滑块 */
+		.small .mask {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 250px;
+			height: 250px;
+			background: black;
+			opacity: .2;
+			display: none;
+		}
+
+    /* 大视窗 */
+		.big {
+			position: absolute;
+			left: 420px;
+			top: 0;
+			width: 500px;
+			height: 500px;
+			overflow: hidden;
+			display: none;
+			box-shadow: 0 0 20px #ccc;
+		}
+
+		.big img {
+			/*big相对是小盒子,bigimg 相对大图 所以坐标值都负值*/
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="wrap">
+		<div class="small" id="small">
+			<img src="images/small.jpg">
+			<!--色块-->
+			<div class="mask" id="mask"></div>
+		</div>
+
+		<div class="big" id="big">
+			<img id='bigimg' src="images/big.jpg">
+		</div>
+	</div>
+	<script>
+		var small = document.getElementById('small'),
+			smallimg = document.getElementById('small').getElementsByTagName('img'),
+			mask = document.getElementById('mask'),
+			bigimg = document.getElementById('bigimg');
+
+		//事件：  onmouseover 鼠标滑过 , onmouseout 鼠标滑离
+
+		// 鼠标离开small盒子隐藏 ig盒子和mask色块
+		small.onmouseout = function () {
+			big.style.display = 'none';
+			mask.style.display = 'none';
+		}
+
+		//鼠标悬停事件
+		small.onmousemove = function (e) {
+      /* 显示大视窗和滑块 */
+			big.style.display = 'block';
+			mask.style.display = 'block';
+
+			var x = e.clientX,
+          y = e.clientY;
+          
+			mask.style.left = x - 145 + 'px';
+			mask.style.top = y - 145 + 'px';
+
+			var bigx = (x - 145) * -2,
+				bigy = (y - 145) * -2;
+
+			bigimg.style.left = bigx + 'px';
+			bigimg.style.top = bigy + 'px';
+
+			if (x < 145) {
+				mask.style.left = 0 + 'px';
+				bigimg.style.left = 0 + 'px';
+			}
+
+			if (x > 295) {
+				mask.style.left = 150 + 'px';
+				bigimg.style.left = -300 + 'px';
+			}
+
+			if (y < 145) {
+				mask.style.top = 0 + 'px';
+				bigimg.style.top = 0 + 'px';
+			}
+			if (y > 295) {
+				mask.style.top = 150 + 'px';
+				bigimg.style.top = -300 + 'px';
+			}
+		}
+	</script>
+</body>
+
+</html>
