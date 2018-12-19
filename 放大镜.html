@@ -10,16 +10,13 @@
 			padding: 0;
 		}
 
-    /* 容器 */
 		.wrap {
 			position: relative;
-			/* border: 1px solid #FF6600; */
 			width: 400px;
 			height: 400px;
-			margin: 20px;
+			margin: 50px 0 0 100px;
 		}
-     
-     /* 小视窗 */
+
 		.small {
 			position: relative;
 			width: 400px;
@@ -31,19 +28,18 @@
 			height: 100%;
 		}
 
-    /* 滑块 */
 		.small .mask {
 			position: absolute;
 			left: 0;
 			top: 0;
-			width: 250px;
-			height: 250px;
+			width: 100px;
+			height: 100px;
 			background: black;
-			opacity: .2;
+			opacity: .3;
 			display: none;
+			cursor: move;
 		}
 
-    /* 大视窗 */
 		.big {
 			position: absolute;
 			left: 420px;
@@ -56,78 +52,67 @@
 		}
 
 		.big img {
-			/*big相对是小盒子,bigimg 相对大图 所以坐标值都负值*/
 			position: absolute;
 			left: 0;
 			top: 0;
 		}
 	</style>
 </head>
-
-<body>
-	<div class="wrap">
-		<div class="small" id="small">
-			<img src="images/small.jpg">
-			<!--色块-->
-			<div class="mask" id="mask"></div>
-		</div>
-
-		<div class="big" id="big">
-			<img id='bigimg' src="images/big.jpg">
-		</div>
+<div class="wrap" id="wrap">
+	<div class="small" id="small">
+		<img src="./images/small.jpg" id="smallimg">
+		<div class="mask" id="mask"></div>
 	</div>
-	<script>
-		var small = document.getElementById('small'),
-			smallimg = document.getElementById('small').getElementsByTagName('img'),
-			mask = document.getElementById('mask'),
-			bigimg = document.getElementById('bigimg');
+	<div class="big" id="big">
+		<img src="./images/big.jpg" id="bigimg">
+	</div>
+</div>
 
-		//事件：  onmouseover 鼠标滑过 , onmouseout 鼠标滑离
+<script>
+	var small = document.getElementById('small'),
+		smallimg = document.getElementById('smallimg'),
+		mask = document.getElementById('mask'),
+		big = document.getElementById('big'),
+		bigimg = document.getElementById('bigimg'),
+		wrap = document.getElementById('wrap');
 
-		// 鼠标离开small盒子隐藏 ig盒子和mask色块
-		small.onmouseout = function () {
-			big.style.display = 'none';
-			mask.style.display = 'none';
+	//鼠标移出隐藏
+	small.onmouseout = function () {
+		big.style.display = 'none';
+		mask.style.display = 'none';
+	}
+
+	small.onmousemove = function (e) {
+		big.style.display = 'block';
+		mask.style.display = 'block';
+
+		//滑块大小
+		mask.style.width = big.offsetWidth / bigimg.scrollWidth * smallimg.offsetWidth + 'px';
+		mask.style.height = big.offsetHeight / bigimg.scrollHeight * smallimg.offsetHeight + 'px';
+
+    //滑块位置
+		var left = e.pageX - wrap.offsetLeft - mask.offsetWidth / 2;
+		var top = e.pageY - wrap.offsetTop - mask.offsetHeight / 2;
+
+		if (left < 0) {
+			left = 0;
+		} else if (left > small.offsetWidth - mask.offsetWidth) {
+			left = small.offsetWidth - mask.offsetWidth;
+		}
+		if (top < 0) {
+			top = 0;
+		} else if (top > small.offsetHeight - mask.offsetHeight) {
+			top = small.offsetHeight - mask.offsetHeight;
 		}
 
-		//鼠标悬停事件
-		small.onmousemove = function (e) {
-      /* 显示大视窗和滑块 */
-			big.style.display = 'block';
-			mask.style.display = 'block';
+		//滑块坐标
+		mask.style.left = left + 'px';
+		mask.style.top = top + 'px';
 
-			var x = e.clientX,
-          y = e.clientY;
-          
-			mask.style.left = x - 145 + 'px';
-			mask.style.top = y - 145 + 'px';
-
-			var bigx = (x - 145) * -2,
-				bigy = (y - 145) * -2;
-
-			bigimg.style.left = bigx + 'px';
-			bigimg.style.top = bigy + 'px';
-
-			if (x < 145) {
-				mask.style.left = 0 + 'px';
-				bigimg.style.left = 0 + 'px';
-			}
-
-			if (x > 295) {
-				mask.style.left = 150 + 'px';
-				bigimg.style.left = -300 + 'px';
-			}
-
-			if (y < 145) {
-				mask.style.top = 0 + 'px';
-				bigimg.style.top = 0 + 'px';
-			}
-			if (y > 295) {
-				mask.style.top = 150 + 'px';
-				bigimg.style.top = -300 + 'px';
-			}
-		}
-	</script>
+		bigimg.style.left = -left * (bigimg.offsetWidth / smallimg.offsetWidth) + 'px';
+		bigimg.style.top = -top * (bigimg.offsetHeight / smallimg.offsetHeight) + 'px';
+	}
+</script>
 </body>
 
 </html>
